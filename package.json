@@ -1,0 +1,21 @@
+{
+	"name": "deck-vault-back",
+	"version": "1.0.0",
+	"description": "backend for the deckvault app, using nodejs, express and mysql",
+	"main": "index.js",
+	"scripts": {
+		"server": "node index.js",
+		"format": "prettier --write **/*.js"
+	},
+	"author": "Wilfried baspeyras",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.18.3",
+		"mysql2": "^3.9.2",
+		"node-fetch": "^3.3.2"
+	},
+	"devDependencies": {
+		"prettier": "^3.2.5"
+	},
+	"type": "module"
+}
