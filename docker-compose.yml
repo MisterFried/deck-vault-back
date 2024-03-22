@@ -24,6 +24,7 @@ services:
                 condition: service_healthy
         environment:
             - DB_HOST=db
+            - PORT=3000
         command: sh -c 'until nc -zv db 3306; do echo "Waiting for MySQL to start..."; sleep 1; done; npm run server'
         volumes:
             - data:/fetched-data

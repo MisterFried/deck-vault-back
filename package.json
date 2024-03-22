@@ -4,7 +4,7 @@
 	"description": "backend for the deckvault app, using nodejs, express and mysql",
 	"main": "index.js",
 	"scripts": {
-		"server": "node index.js",
+		"server": "node ./app/index.js",
 		"format": "prettier --write **/*.js"
 	},
 	"author": "Wilfried baspeyras",

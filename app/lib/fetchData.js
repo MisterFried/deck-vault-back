@@ -1,5 +1,10 @@
 import fetch from "node-fetch";
 
+/**
+ * Asynchronously fetches cards and sets data, processes and organizes the data, and returns an object containing the processed cards, archetypes, images, sets, and prints.
+ *
+ * @return {Object} An object containing the processed cards, archetypes, images, sets, and prints
+ */
 export default async function fetchData() {
 	// Fetch cards data
 	const cardsResponse = await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php");
