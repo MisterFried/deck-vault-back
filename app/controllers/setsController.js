@@ -22,6 +22,7 @@ export async function processSetCards(code) {
 		return {
 			name: set.name,
 			code: set.code,
+			date: set.date,
 			id: set.id,
 		};
 	});

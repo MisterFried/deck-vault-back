@@ -8,9 +8,6 @@ export async function getArchetypes() {
 
 export async function getArchetypeCards(name) {
 	const db = await getDatabase();
-	const [rows] = await db.execute(
-		"SELECT name, attribute, level, type, category, description, atk, def, archetype, link, scale, banlist FROM cards WHERE archetype = ?",
-		[name]
-	);
+	const [rows] = await db.execute("SELECT * FROM cards WHERE archetype = ?", [name]);
 	return rows;
 }

@@ -60,7 +60,8 @@ export default async function fetchData() {
 		if (card.archetype) newCard.archetype = card.archetype;
 		if (card.linkval) newCard.link = card.linkval;
 		if (card.scale) newCard.scale = card.scale;
-		newCard.banlist = card.banlist ? card.banlist : "Unlimited";
+		newCard.banlist = "Unlimited"
+		if (card.banlist_info && card.banlist_info.ban_tcg) newCard.banlist = card.banlist_info.ban_tcg
 		cards.push(newCard);
 
 		// Add archetype if not already added
