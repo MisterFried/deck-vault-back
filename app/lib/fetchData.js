@@ -89,6 +89,10 @@ export default async function fetchData() {
 					s => s.name.toLowerCase() === set.set_name.toLowerCase()
 				);
 
+				// Case when the card is said to have a print in a specific set,
+				// But the set doesn't exist yet
+				if (!correspondingSet) return;
+
 				prints.push({
 					id: printId++,
 					card_id: cardId,

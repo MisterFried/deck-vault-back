@@ -86,7 +86,7 @@ export async function databaseInit() {
 			card.banlist,
 		]);
 		const insertCardsQuery =
-			"INSERT INTO cards (id, name, attribute, level, type, category, description, atk, def, archetype, link, scale, banlist) VALUES ?";
+			"INSERT IGNORE INTO cards (id, name, attribute, level, type, category, description, atk, def, archetype, link, scale, banlist) VALUES ?";
 		const [cardsResults] = await db.query(insertCardsQuery, [insertCardsData]);
 		console.log("Cards data inserted");
 
@@ -96,14 +96,14 @@ export async function databaseInit() {
 			archetype.id,
 			archetype.name,
 		]);
-		const insertArchetypesQuery = "INSERT INTO archetypes (id, name) VALUES ?";
+		const insertArchetypesQuery = "INSERT IGNORE INTO archetypes (id, name) VALUES ?";
 		const [ArchetypesResults] = await db.query(insertArchetypesQuery, [insertArchetypesData]);
 		console.log("Archetypes data inserted");
 
 		const imagesData = await readLargeFile("/fetched-data/images.json");
 		const imagesJSON = await JSON.parse(imagesData);
 		const insertImagesData = imagesJSON.map(image => [image.id, image.card_id, image.image_id]);
-		const insertImagesQuery = "INSERT INTO images (id, card_id, image_id) VALUES ?";
+		const insertImagesQuery = "INSERT IGNORE INTO images (id, card_id, image_id) VALUES ?";
 		const [imagesResults] = await db.query(insertImagesQuery, [insertImagesData]);
 		console.log("Images data inserted");
 
@@ -116,7 +116,7 @@ export async function databaseInit() {
 			set.date,
 			set.cards_amount,
 		]);
-		const insertSetsQuery = "INSERT INTO sets (id, name, code, date, cards_amount) VALUES ?";
+		const insertSetsQuery = "INSERT IGNORE INTO sets (id, name, code, date, cards_amount) VALUES ?";
 		const [setsResults] = await db.query(insertSetsQuery, [insertSetsData]);
 		console.log("Sets data inserted");
 
@@ -130,7 +130,7 @@ export async function databaseInit() {
 			print.code,
 		]);
 		const insertPrintsQuery =
-			"INSERT INTO prints (id, card_id, product_id, rarity, code) VALUES ?";
+			"INSERT IGNORE INTO prints (id, card_id, product_id, rarity, code) VALUES ?";
 		const [printsResults] = await db.query(insertPrintsQuery, [insertPrintsData]);
 		console.log("Prints data inserted");
 

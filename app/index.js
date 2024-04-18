@@ -1,6 +1,10 @@
 // Modules
 import express from "express";
+
+// Functions
 import { databaseInit } from "./lib/databaseInit.js";
+
+// Routes
 import cardsRoutes from "./routes/cardsRoutes.js";
 import archetypesRoutes from "./routes/archetypesRoutes.js";
 import setsRoutes from "./routes/setsRoutes.js";
