@@ -35,3 +35,9 @@ export async function getCardsByName(name) {
 	const [rows] = await db.execute("SELECT * FROM cards WHERE name LIKE ?", [`%${name}%`]);
 	return rows;
 }
+
+export async function getCardPrints(id) {
+	const db = await getDatabase();
+	const [rows] = await db.execute("SELECT prints.id, prints.rarity, prints.code, sets.name AS set_name, sets.code AS set_code, sets.date AS set_date FROM prints INNER JOIN sets ON prints.product_id = sets.id WHERE prints.card_id = ?", [id]);
+	return rows;
+}

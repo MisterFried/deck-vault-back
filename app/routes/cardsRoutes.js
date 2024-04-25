@@ -47,9 +47,9 @@ router.get("/trap", async (req, res) => {
 router.get("/search/:name", async (req, res) => {
 	try {
 		const name = req.params.name;
-		const card = await processSpecificCard(name);
+		const card = await processSpecificCard(decodeURIComponent(name.replaceAll("_", " ")));
 
-		if (card.length === 0) res.status(404).send("This card does not exist.");
+		if (!card) res.status(404).send("This card does not exist.");
 		else res.status(200).send(card);
 	} catch (error) {
 		console.error(error);

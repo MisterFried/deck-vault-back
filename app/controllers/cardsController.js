@@ -1,4 +1,4 @@
-import { getAllCards, getMonsterCards, getSpellCards, getTrapCards, getSpecificCard, getCardsByName } from "../models/cardsModels.js";
+import { getAllCards, getMonsterCards, getSpellCards, getTrapCards, getSpecificCard, getCardsByName, getCardPrints } from "../models/cardsModels.js";
 
 export async function processAllCards() {
 	const allCardsDB = await getAllCards();
@@ -22,7 +22,12 @@ export async function processTrapCards() {
 
 export async function processSpecificCard(name) {
 	const specificCardDB = await getSpecificCard(name);
-	return specificCardDB;
+
+	if (specificCardDB.length === 0) return null;
+
+	const prints = await getCardPrints(specificCardDB[0].id);
+
+	return {...specificCardDB[0], prints: prints};
 }
 
 export async function processCardsByName(name) {
