@@ -55,8 +55,8 @@ export default async function fetchData() {
 		if (card.attribute) newCard.attribute = card.attribute;
 		if (card.level) newCard.level = card.level;
 		if (card.race) newCard.type = card.race;
-		if (card.atk) newCard.atk = card.atk;
-		if (card.def) newCard.def = card.def;
+		if (card.atk !== null) newCard.atk = card.atk;
+		if (card.def !== null) newCard.def = card.def;
 		if (card.archetype) newCard.archetype = card.archetype;
 		if (card.linkval) newCard.link = card.linkval;
 		if (card.scale) newCard.scale = card.scale;
