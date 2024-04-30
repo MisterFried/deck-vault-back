@@ -34,26 +34,36 @@ The API should now be accessible via *localhost:3000*.
 
 #### Cards
 /cards - Returns all existing cards.
+
 /cards/monster - Returns all monster cards.
+
 /cards/spell - Returns all spell cards.
+
 /cards/trap - Returns all trap cards.
+
 /cards/search/:name - Searches for a card with the specified name.
+
 /cards/:name - Searches all cards containing the specified name in their title.
 
 #### Sets
 /sets - Returns a list of all existing sets.
+
 /sets/:code - Returns cards contained in the specified set.
 
 #### Archetypes
 /archetypes - Returns a list of all existing archetypes.
+
 /archetypes/:name - Returns all cards with the specified archetype.
 
 *Note: a card can only have a single archetype*
 
 #### Banlist
 /banlist - Returns all cards on the banlist (banned, limited, semi-limited).
+
 /banlist/banned - Returns all banned cards.
+
 /banlist/limited - Returns all limited cards.
+
 /banlist/semi-limited - Returns all semi-limited cards.
 
 ### Source / Credits
