@@ -1,4 +1,4 @@
-import { getSets, getSetCards } from "../models/setsModels.js";
+import { getSets, getSetBreakdown } from "../models/setsModels.js";
 
 export async function processSets() {
 	const setsDB = await getSets();
@@ -13,23 +13,23 @@ export async function processSets() {
 	return processedSets;
 }
 
-export async function processSetCards(code) {
+export async function processSetBreakdown(code) {
 	const setsList = await getSets();
-	const matchingSets = setsList.filter(set => set.code === code);
-	if (matchingSets.length === 0) return [];
+	const matchingSetVariants = setsList.filter(set => set.code === code);
+	if (matchingSetVariants.length === 0) return null;
 
-	const matchingSetsId = matchingSets.map(set => {
+	const variantsDetails = matchingSetVariants.map(variant => {
 		return {
-			name: set.name,
-			code: set.code,
-			date: set.date,
-			id: set.id,
+			name: variant.name,
+			code: variant.code,
+			date: variant.date,
+			id: variant.id,
 		};
 	});
-	const setVariantsBreakdown = await getSetCards(matchingSetsId);
+	const setBreakdown = await getSetBreakdown(variantsDetails);
 
 	// Prevent duplicate cards by regrouping identical cards with different rarity
-	setVariantsBreakdown.forEach(variant => {
+	setBreakdown.forEach(variant => {
 		const rarityGroupedCards = [];
 
 		variant.cards.forEach(card => {
@@ -44,5 +44,5 @@ export async function processSetCards(code) {
 		variant.cards = rarityGroupedCards;
 	});
 
-	return setVariantsBreakdown;
+	return setBreakdown;
 }

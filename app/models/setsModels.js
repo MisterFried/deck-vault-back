@@ -6,23 +6,25 @@ export async function getSets() {
 	return rows;
 }
 
-export async function getSetCards(ids) {
+export async function getSetBreakdown(variants) {
 	const db = await getDatabase();
 
-	const finalCardsList = [];
+	const variantsDetails = [];
 
-	for (let i = 0; i < ids.length; i++) {
+	for (let i = 0; i < variants.length; i++) {
+		const variant = variants[i];
 		const [cards] = await db.query(
 			"SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, prints.rarity, prints.code FROM cards INNER JOIN prints ON cards.id = prints.card_id WHERE prints.product_id = ?",
-			[ids[i].id]
+			[variant.id]
 		);
-		finalCardsList.push({
-			set_name: ids[i].name,
-			set_code: ids[i].code,
-			set_date: ids[i].date,
+		variantsDetails.push({
+			name: variant.name,
+			code: variant.code,
+			date: variant.date,
 			cards: cards,
 		});
 	}
 
-	return finalCardsList;
+
+	return variantsDetails;
 }

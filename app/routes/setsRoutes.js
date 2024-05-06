@@ -1,5 +1,5 @@
 import express from "express";
-import { processSets, processSetCards } from "../controllers/setsController.js";
+import { processSets, processSetBreakdown } from "../controllers/setsController.js";
 
 const router = express.Router();
 
@@ -16,10 +16,10 @@ router.get("/", async (req, res) => {
 router.get("/:code", async (req, res) => {
 	try {
 		const code = req.params.code;
-		const cardsList = await processSetCards(code);
+		const setBreakdown = await processSetBreakdown(code);
 
-		if (cardsList.length === 0) res.status(404).send("The specified set does not exist.");
-		else res.status(200).send(cardsList);
+		if (setBreakdown === null) res.status(404).send("The specified set does not exist.");
+		else res.status(200).send(setBreakdown);
 	} catch (error) {
 		console.error(error);
 		res.status(500).send(error);
