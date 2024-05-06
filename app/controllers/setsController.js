@@ -26,6 +26,23 @@ export async function processSetCards(code) {
 			id: set.id,
 		};
 	});
-	const cardsListDB = await getSetCards(matchingSetsId);
-	return cardsListDB;
+	const setVariantsBreakdown = await getSetCards(matchingSetsId);
+
+	// Prevent duplicate cards by regrouping identical cards with different rarity
+	setVariantsBreakdown.forEach(variant => {
+		const rarityGroupedCards = [];
+
+		variant.cards.forEach(card => {
+			const existingCard = rarityGroupedCards.find(c => c.name === card.name);
+			if (!existingCard) {
+				rarityGroupedCards.push({ ...card, rarity: [card.rarity] });
+			} else {
+				existingCard.rarity.push(card.rarity);
+			}
+		});
+
+		variant.cards = rarityGroupedCards;
+	});
+
+	return setVariantsBreakdown;
 }
