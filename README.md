@@ -25,7 +25,7 @@ cd deck-vault-back
 Start the application using Docker compose:
 
 ```sh
-docker-compose up --build
+docker-compose up --build --watch
 ```
 
 The API should now be accessible via *localhost:3000*.
@@ -76,6 +76,9 @@ A MySQL database container.
 A Node/Express server container.
 
 Tables are then created and populated in the database. Once finished, the server will be up and running, available at localhost:3000.
+
+Any changes to the local files inside the app directory will be synced with the container, and the app then reloaded thanks to nodemon.
+Changes outside the app directory (e.g. : package.json, config file, ...) will need a manual restart of the containers.
 
 ### Build With
 

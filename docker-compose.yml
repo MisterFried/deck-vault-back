@@ -26,6 +26,11 @@ services:
         command: sh -c 'until nc -zv db 3306; do echo "Waiting for MySQL to start..."; sleep 1; done; npm run server'
         volumes:
             - data:/fetched-data
+        develop:
+            watch:
+                - action: sync
+                  path: ./app
+                  target: /app/app
 
 volumes:
     data:

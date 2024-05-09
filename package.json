@@ -4,7 +4,7 @@
 	"description": "backend for the deckvault app, using nodejs, express and mysql",
 	"main": "index.js",
 	"scripts": {
-		"server": "node ./app/index.js",
+		"server": "nodemon ./app/index.js",
 		"format": "prettier --write **/*.js"
 	},
 	"author": "Wilfried baspeyras",
@@ -15,6 +15,7 @@
 		"node-fetch": "^3.3.2"
 	},
 	"devDependencies": {
+		"nodemon": "^3.1.0",
 		"prettier": "^3.2.5"
 	},
 	"type": "module"
