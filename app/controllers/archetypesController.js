@@ -8,7 +8,8 @@ export async function processArchetypes() {
 
 export async function processArchetypeCards(name) {
 	const archetypesList = await processArchetypes();
-	if (!archetypesList.includes(name)) return [];
+	const normalizedArchetypesList = archetypesList.map(archetype => archetype.toLowerCase());
+	if (!normalizedArchetypesList.includes(name)) return null;
 
 	const cardsListDB = await getArchetypeCards(name);
 	return cardsListDB;
