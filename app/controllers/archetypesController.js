@@ -1,16 +1,28 @@
-import { getArchetypes, getArchetypeCards } from "../models/archetypesModels.js";
+import { getArchetypesList, getArchetypeCards } from "../models/archetypesModels.js";
 
-export async function processArchetypes() {
-	const archetypesDB = await getArchetypes();
-	const processedArchetypes = archetypesDB.map(archetype => archetype.name);
-	return processedArchetypes;
+// Get the list of all the archetypes
+export async function processArchetypesList() {
+	const archetypesList = await getArchetypesList();
+
+	//Convert from an array of objects to an array of strings
+	const processedArchetypesList = archetypesList.map(archetype => archetype.name);
+	return processedArchetypesList;
 }
 
-export async function processArchetypeCards(name) {
-	const archetypesList = await processArchetypes();
-	const normalizedArchetypesList = archetypesList.map(archetype => archetype.toLowerCase());
-	if (!normalizedArchetypesList.includes(name)) return null;
+// Get the list of all the cards of the specified archetype along with some additional information
+export async function processArchetypeCards(name, search, page, perPage) {
+	const archetypesList = await processArchetypesList();
 
-	const cardsListDB = await getArchetypeCards(name);
-	return cardsListDB;
+	const matchingArchetype = archetypesList.find(archetype => archetype.toLowerCase() === name.toLowerCase());
+
+	if (!matchingArchetype) return null
+
+	const archetypeCards = await getArchetypeCards(name, search, page, perPage);
+
+	// Convert the image IDs from a string to an array of numbers
+	archetypeCards.cards.forEach((card) => {
+		card.images = (card.images.split(",")).map((id) => Number(id));
+	});
+
+	return {archetype: matchingArchetype, ...archetypeCards};
 }
