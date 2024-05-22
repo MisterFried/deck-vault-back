@@ -1,36 +1,37 @@
-import { getAllCards, getMonsterCards, getSpellCards, getTrapCards, getSpecificCard, getCardsByName, getCardPrints } from "../models/cardsModels.js";
+import { getAllCards, getSpecificCard, getCardsByName, getCardPrints } from "../models/cardsModels.js";
 
-export async function processAllCards() {
-	const allCardsDB = await getAllCards();
-	return allCardsDB;
+// Get the list of all the cards
+export async function processAllCards(page, perPage) {
+	const allCards = await getAllCards(page, perPage);
+
+	allCards.cards.forEach((card) => {
+		card.images = (card.images.split(",")).map((id) => Number(id));
+	});
+
+	return allCards;
 }
 
-export async function processMonsterCards() {
-	const monsterCardsDB = await getMonsterCards();
-	return monsterCardsDB;
-}
-
-export async function processSpellCards() {
-	const spellCardsDB = await getSpellCards();
-	return spellCardsDB;
-}
-
-export async function processTrapCards() {
-	const trapCardsDB = await getTrapCards();
-	return trapCardsDB;
-}
-
+// Returns the details of the specified card
 export async function processSpecificCard(name) {
-	const specificCardDB = await getSpecificCard(name);
+	const cardDetails = await getSpecificCard(name);
 
-	if (specificCardDB.length === 0) return null;
+	if (!cardDetails) return null;
 
-	const prints = await getCardPrints(specificCardDB[0].id);
+	cardDetails.images = (cardDetails.images.split(",")).map((id) => Number(id));
 
-	return {...specificCardDB[0], prints: prints};
+	// Get the list of all the prints of the card
+	const cardPrints = await getCardPrints(cardDetails.id);
+
+	return {...cardDetails, prints: cardPrints};
 }
 
-export async function processCardsByName(name) {
-	const cardsByNameDB = await getCardsByName(name);
-	return cardsByNameDB;
+// Returns the list of all the cards that match the specified name
+export async function processCardsByName(name, page, perPage) {
+	const cards = await getCardsByName(name, page, perPage);
+
+	cards.cards.forEach((card) => {
+		card.images = (card.images.split(",")).map((id) => Number(id));
+	});
+
+	return cards;
 }
