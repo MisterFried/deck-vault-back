@@ -1,32 +1,21 @@
-import { getSets, getSetBreakdown } from "../models/setsModels.js";
+import { getSetsList, getSetBreakdown } from "../models/setsModels.js";
 
-export async function processSets() {
-	const setsDB = await getSets();
-	const processedSets = setsDB.map(set => {
-		return {
-			name: set.name,
-			code: set.code,
-			date: set.date,
-			cards_amount: set.cards_amount,
-		};
-	});
-	return processedSets;
+// Get the list of all the sets
+export async function processSetsList() {
+	const setsList = await getSetsList();
+
+	return setsList;
 }
 
+// Get the breakdown of the specified set will all its variants
 export async function processSetBreakdown(code) {
-	const setsList = await getSets();
-	const matchingSetVariants = setsList.filter(set => set.code === code);
-	if (matchingSetVariants.length === 0) return null;
+	const setsList = await getSetsList();
 
-	const variantsDetails = matchingSetVariants.map(variant => {
-		return {
-			name: variant.name,
-			code: variant.code,
-			date: variant.date,
-			id: variant.id,
-		};
-	});
-	const setBreakdown = await getSetBreakdown(variantsDetails);
+	// Check if the specified set exists
+	const setVariants = setsList.filter(set => set.code === code);
+	if (setVariants.length === 0) return null;
+
+	const setBreakdown = await getSetBreakdown(setVariants);
 
 	// Prevent duplicate cards by regrouping identical cards with different rarity
 	setBreakdown.forEach(variant => {
@@ -34,11 +23,17 @@ export async function processSetBreakdown(code) {
 
 		variant.cards.forEach(card => {
 			const existingCard = rarityGroupedCards.find(c => c.name === card.name);
+
 			if (!existingCard) {
 				rarityGroupedCards.push({ ...card, rarity: [card.rarity] });
 			} else {
 				existingCard.rarity.push(card.rarity);
 			}
+		});
+		
+		// Convert the image IDs from a string to an array of numbers
+		rarityGroupedCards.forEach(card => {
+			card.images = (card.images.split(',')).map(id => Number(id));
 		});
 
 		variant.cards = rarityGroupedCards;

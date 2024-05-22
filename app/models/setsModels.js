@@ -1,30 +1,32 @@
 import { getDatabase } from "../lib/databaseInit.js";
 
-export async function getSets() {
+// Get the list of all the sets
+export async function getSetsList() {
 	const db = await getDatabase();
-	const [rows] = await db.execute("SELECT * FROM sets");
+
+	const [rows] = await db.execute("SELECT id, name, code, date, cards_amount AS cardsAmount FROM sets");
 	return rows;
 }
 
+// Get the breakdown of the specified set will all its variants
 export async function getSetBreakdown(variants) {
 	const db = await getDatabase();
 
 	const variantsDetails = [];
 
 	for (let i = 0; i < variants.length; i++) {
-		const variant = variants[i];
-		const [cards] = await db.query(
-			"SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, prints.rarity, prints.code FROM cards INNER JOIN prints ON cards.id = prints.card_id WHERE prints.product_id = ?",
-			[variant.id]
+		const [rows] = await db.query(
+			"SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, prints.rarity, prints.code, GROUP_CONCAT(images.image_id) AS images FROM cards INNER JOIN prints ON cards.id = prints.card_id INNER JOIN images ON cards.id = images.card_id WHERE prints.product_id = ? GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, prints.rarity, prints.code",
+			[variants[i].id]
 		);
+
 		variantsDetails.push({
-			name: variant.name,
-			code: variant.code,
-			date: variant.date,
-			cards: cards,
+			name: variants[i].name,
+			code: variants[i].code,
+			date: variants[i].date,
+			cards: rows,
 		});
 	}
-
 
 	return variantsDetails;
 }
