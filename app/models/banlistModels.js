@@ -1,9 +1,20 @@
 import { getDatabase } from "../lib/databaseInit.js";
 
-export async function getBanlist() {
+// Get all the cards on the banlist depending on the status
+export async function getBanlist(status) {
 	const db = await getDatabase();
+
+	// If status is 'all', get all the cards on the banlist
+	if (status === "all") {
+		const [rows] = await db.execute(
+			"SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images FROM cards INNER JOIN images ON cards.id = images.card_id WHERE banlist = 'banned' OR banlist = 'limited' OR banlist = 'semi-limited' GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist", [status]
+		);
+		return rows;
+	}
+
+	// Otherwise, get only the cards on the banlist with the specified status
 	const [rows] = await db.execute(
-		"SELECT * FROM cards WHERE banlist = 'Banned' OR banlist = 'Limited' OR banlist = 'Semi-Limited'"
+		"SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images FROM cards INNER JOIN images ON cards.id = images.card_id WHERE banlist = ? GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist", [status]
 	);
 	return rows;
 }
