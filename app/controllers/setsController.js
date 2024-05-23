@@ -30,10 +30,10 @@ export async function processSetBreakdown(code) {
 				existingCard.rarity.push(card.rarity);
 			}
 		});
-		
+
 		// Convert the image IDs from a string to an array of numbers
 		rarityGroupedCards.forEach(card => {
-			card.images = (card.images.split(',')).map(id => Number(id));
+			card.images = card.images.split(",").map(id => Number(id));
 		});
 
 		variant.cards = rarityGroupedCards;

@@ -24,7 +24,6 @@ router.get("/:code", async (req, res) => {
 		const setBreakdown = await processSetBreakdown(code);
 
 		if (!setBreakdown) res.status(404).send("The specified set does not exist.");
-
 		else res.status(200).send(setBreakdown);
 	} catch (error) {
 		console.error(error);

@@ -7,7 +7,13 @@ export async function getAllCards(page, perPage) {
 	// Calculate pagination offset
 	const offset = (page - 1) * perPage;
 
-	const [rows] = await db.execute("SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images FROM cards INNER JOIN images ON cards.id = images.card_id GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist LIMIT ? OFFSET ?", [`${perPage}`, `${offset}`]);
+	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images 
+	FROM cards 
+	INNER JOIN images ON cards.id = images.card_id 
+	GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist 
+	LIMIT ? 
+	OFFSET ?`;
+	const [rows] = await db.execute(query, [`${perPage}`, `${offset}`]);
 	const [total] = await db.execute("SELECT COUNT(*) AS total FROM cards");
 
 	return {
@@ -20,8 +26,13 @@ export async function getAllCards(page, perPage) {
 export async function getSpecificCard(name) {
 	const db = await getDatabase();
 
-	const [rows] = await db.execute("SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images FROM cards INNER JOIN images ON cards.id = images.card_id WHERE cards.name = ? GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist", [name]);
-	
+	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images 
+	FROM cards 
+	INNER JOIN images ON cards.id = images.card_id 
+	WHERE cards.name = ? 
+	GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist`;
+	const [rows] = await db.execute(query, [name]);
+
 	return rows.length === 0 ? null : rows[0];
 }
 
@@ -32,9 +43,18 @@ export async function getCardsByName(name, page, perPage) {
 	// Calculate pagination offset
 	const offset = (page - 1) * perPage;
 
-	const [rows] = await db.execute("SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images FROM cards INNER JOIN images ON cards.id = images.card_id WHERE name LIKE ? GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist LIMIT ? OFFSET ?", [`%${name}%`, `${perPage}`, `${offset}`]);
-	const [total] = await db.execute("SELECT COUNT(*) AS total FROM cards WHERE name LIKE ?", [`%${name}%`]);
-	
+	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images 
+	FROM cards 
+	INNER JOIN images ON cards.id = images.card_id 
+	WHERE name LIKE ? 
+	GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist 
+	LIMIT ? 
+	OFFSET ?`;
+	const [rows] = await db.execute(query, [`%${name}%`, `${perPage}`, `${offset}`]);
+	const [total] = await db.execute("SELECT COUNT(*) AS total FROM cards WHERE name LIKE ?", [
+		`%${name}%`,
+	]);
+
 	return {
 		total: total[0].total,
 		cards: rows || [],
@@ -45,7 +65,11 @@ export async function getCardsByName(name, page, perPage) {
 export async function getCardPrints(id) {
 	const db = await getDatabase();
 
-	const [rows] = await db.execute("SELECT prints.id, prints.rarity, prints.code, sets.name AS setName, sets.date AS date FROM prints INNER JOIN sets ON prints.product_id = sets.id WHERE prints.card_id = ?", [id]);
-	
+	const query = `SELECT prints.id, prints.rarity, prints.code, sets.name AS setName, sets.date AS date 
+	FROM prints 
+	INNER JOIN sets ON prints.product_id = sets.id 
+	WHERE prints.card_id = ?`;
+	const [rows] = await db.execute(query, [id]);
+
 	return rows;
 }

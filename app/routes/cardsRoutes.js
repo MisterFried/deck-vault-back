@@ -1,5 +1,9 @@
 import express from "express";
-import { processAllCards, processSpecificCard, processCardsByName } from "../controllers/cardsController.js";
+import {
+	processAllCards,
+	processSpecificCard,
+	processCardsByName,
+} from "../controllers/cardsController.js";
 import formatError from "../lib/formatError.js";
 
 const router = express.Router();
@@ -7,7 +11,7 @@ const router = express.Router();
 // Returns the list of all the cards
 router.get("/", async (req, res) => {
 	try {
-		const {page, perPage} = req.query;
+		let { page, perPage } = req.query;
 		if (!page || isNaN(Number(page)) || page < 1) page = 1;
 		if (!perPage || isNaN(Number(perPage)) || perPage < 10 || perPage > 100) perPage = 10;
 
@@ -20,12 +24,11 @@ router.get("/", async (req, res) => {
 	}
 });
 
-
 // Returns the details of the specified card
 router.get("/search/:name", async (req, res) => {
 	try {
 		const name = req.params.name;
-		const decodedName = decodeURIComponent(name.replaceAll("_", " "))
+		const decodedName = decodeURIComponent(name.replaceAll("_", " "));
 
 		const cardDetails = await processSpecificCard(decodedName);
 
@@ -37,21 +40,23 @@ router.get("/search/:name", async (req, res) => {
 	}
 });
 
-
 // Returns the list of all the cards that match the specified name
 router.get("/:name", async (req, res) => {
 	try {
 		const name = req.params.name;
 		const decodedName = decodeURIComponent(name.replaceAll("_", " "));
 
-		let {page, perPage} = req.query;
+		let { page, perPage } = req.query;
 		if (!page || isNaN(Number(page)) || page < 1) page = 1;
 		if (!perPage || isNaN(Number(perPage)) || perPage < 10 || perPage > 100) perPage = 10;
 
 		const cards = await processCardsByName(decodedName, page, perPage);
 
 		if (cards.total === 0) res.status(404).send("No cards matching the specified name.");
-		else if (cards.cards.length === 0) res.status(404).send("No cards matching your pagination params. You are probably searching for a page that does not exist.");
+		else if (cards.cards.length === 0)
+			res.status(404).send(
+				"No cards matching your pagination params. You are probably searching for a page that does not exist."
+			);
 		else res.status(200).send(cards);
 	} catch (error) {
 		console.error(error);

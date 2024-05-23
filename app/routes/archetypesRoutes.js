@@ -1,5 +1,8 @@
 import express from "express";
-import { processArchetypesList, processArchetypeCards } from "../controllers/archetypesController.js";
+import {
+	processArchetypesList,
+	processArchetypeCards,
+} from "../controllers/archetypesController.js";
 import formatError from "../lib/formatError.js";
 
 const router = express.Router();
@@ -22,7 +25,7 @@ router.get("/:name", async (req, res) => {
 		let archetype = req.params.name;
 		archetype = decodeURIComponent(archetype.toLowerCase().replaceAll("_", " "));
 
-		let {search, page, perPage} = req.query;
+		let { search, page, perPage } = req.query;
 		if (!page || isNaN(Number(page)) || page < 1) page = 1;
 		if (!perPage || isNaN(Number(perPage)) || perPage < 10 || perPage > 100) perPage = 10;
 		if (!search) search = "";
@@ -30,7 +33,7 @@ router.get("/:name", async (req, res) => {
 		const archetypeCards = await processArchetypeCards(archetype, search, page, perPage);
 
 		if (!archetypeCards) res.status(404).send("The specified archetype does not exist.");
-		
+
 		res.status(200).send(archetypeCards);
 	} catch (error) {
 		console.error(error);

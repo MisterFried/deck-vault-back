@@ -13,16 +13,18 @@ export async function processArchetypesList() {
 export async function processArchetypeCards(name, search, page, perPage) {
 	const archetypesList = await processArchetypesList();
 
-	const matchingArchetype = archetypesList.find(archetype => archetype.toLowerCase() === name.toLowerCase());
+	const matchingArchetype = archetypesList.find(
+		archetype => archetype.toLowerCase() === name.toLowerCase()
+	);
 
-	if (!matchingArchetype) return null
+	if (!matchingArchetype) return null;
 
 	const archetypeCards = await getArchetypeCards(name, search, page, perPage);
 
 	// Convert the image IDs from a string to an array of numbers
-	archetypeCards.cards.forEach((card) => {
-		card.images = (card.images.split(",")).map((id) => Number(id));
+	archetypeCards.cards.forEach(card => {
+		card.images = card.images.split(",").map(id => Number(id));
 	});
 
-	return {archetype: matchingArchetype, ...archetypeCards};
+	return { archetype: matchingArchetype, ...archetypeCards };
 }

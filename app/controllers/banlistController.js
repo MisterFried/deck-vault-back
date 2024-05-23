@@ -5,8 +5,8 @@ export async function processBanlistCards(status) {
 	const banlistCards = await getBanlist(status);
 
 	// Convert the image IDs from a string to an array of numbers
-	banlistCards.forEach((card) => {
-		card.image_ids = (card.image_ids.split(",")).map((id) => Number(id));
+	banlistCards.forEach(card => {
+		card.images = card.images.split(",").map(id => Number(id));
 	});
 
 	return banlistCards;

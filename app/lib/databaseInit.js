@@ -18,29 +18,56 @@ export async function databaseInit() {
 	// Create tables in the database
 	try {
 		console.log("Creating tables in the database...");
-		const createCardsTableQuery =
-			"CREATE TABLE IF NOT EXISTS cards (id INT PRIMARY KEY, name VARCHAR(255) NOT NULL, attribute VARCHAR(255), level INT, type VARCHAR(255), category VARCHAR(255) NOT NULL, description TEXT NOT NULL, atk INT, def INT, archetype VARCHAR(255), link INT, scale INT, banlist VARCHAR(255) NOT NULL);";
-		const [cardsResults, cardsFields] = await db.execute(createCardsTableQuery);
+		const createCardsTableQuery = `CREATE TABLE IF NOT EXISTS cards (
+			id INT PRIMARY KEY, 
+			name VARCHAR(255) NOT NULL, 
+			attribute VARCHAR(255), 
+			level INT, 
+			type VARCHAR(255), 
+			category VARCHAR(255) NOT NULL, 
+			description TEXT NOT NULL, 
+			atk INT, 
+			def INT, 
+			archetype VARCHAR(255), 
+			link INT, 
+			scale INT, 
+			banlist VARCHAR(255) NOT NULL
+		)`;
+		await db.execute(createCardsTableQuery);
 		console.log("Cards table created");
 
-		const createArchetypesTableQuery =
-			"CREATE TABLE IF NOT EXISTS archetypes (id INT PRIMARY KEY, name VARCHAR(255) NOT NULL);";
-		const [archetypeResults, archetypesFields] = await db.execute(createArchetypesTableQuery);
+		const createArchetypesTableQuery = `CREATE TABLE IF NOT EXISTS archetypes (
+			id INT PRIMARY KEY, 
+			name VARCHAR(255) NOT NULL
+		)`;
+		await db.execute(createArchetypesTableQuery);
 		console.log("Archetypes table created");
 
-		const createImagesTableQuery =
-			"CREATE TABLE IF NOT EXISTS images (id INT PRIMARY KEY, card_id int NOT NULL, image_id int NOT NULL);";
-		const [imageResults, imageFields] = await db.execute(createImagesTableQuery);
+		const createImagesTableQuery = `CREATE TABLE IF NOT EXISTS images (
+			id INT PRIMARY KEY, 
+			card_id int NOT NULL, 
+			image_id int NOT NULL
+		)`;
+		await db.execute(createImagesTableQuery);
 		console.log("Images table created");
 
-		const createPrintsTableQuery =
-			"CREATE TABLE IF NOT EXISTS prints (id INT PRIMARY KEY, card_id int NOT NULL, product_id int NOT NULL, rarity VARCHAR(255) NOT NULL, code VARCHAR(255) NOT NULL);";
-		const [printResults, printFields] = await db.execute(createPrintsTableQuery);
+		const createPrintsTableQuery = `CREATE TABLE IF NOT EXISTS prints (
+			id INT PRIMARY KEY, 
+			card_id int NOT NULL, 
+			product_id int NOT NULL, 
+			rarity VARCHAR(255) NOT NULL, 
+			code VARCHAR(255) NOT NULL
+		)`;
+		await db.execute(createPrintsTableQuery);
 		console.log("Prints table created");
 
-		const createSetsTableQuery =
-			"CREATE TABLE IF NOT EXISTS sets (id INT PRIMARY KEY, name VARCHAR(255) NOT NULL, code VARCHAR(255) NOT NULL, date DATE NOT NULL, cards_amount INT NOT NULL);";
-		const [setResults, setFields] = await db.execute(createSetsTableQuery);
+		const createSetsTableQuery = `CREATE TABLE IF NOT EXISTS sets (
+			id INT PRIMARY KEY, 
+			name VARCHAR(255) NOT NULL, 
+			code VARCHAR(255) NOT NULL, 
+			date DATE NOT NULL, 
+			cards_amount INT NOT NULL)`;
+		await db.execute(createSetsTableQuery);
 		console.log("Sets table created");
 
 		console.log("All tables were created successfully");
@@ -85,9 +112,23 @@ export async function databaseInit() {
 			card.scale,
 			card.banlist,
 		]);
-		const insertCardsQuery =
-			"INSERT IGNORE INTO cards (id, name, attribute, level, type, category, description, atk, def, archetype, link, scale, banlist) VALUES ?";
-		const [cardsResults] = await db.query(insertCardsQuery, [insertCardsData]);
+		const insertCardsQuery = `INSERT IGNORE INTO cards (
+			id, 
+			name, 
+			attribute, 
+			level, 
+			type, 
+			category, 
+			description, 
+			atk, 
+			def, 
+			archetype, 
+			link, 
+			scale, 
+			banlist
+		) 
+		VALUES ?`;
+		await db.query(insertCardsQuery, [insertCardsData]);
 		console.log("Cards data inserted");
 
 		const archetypesData = await readLargeFile("/fetched-data/archetypes.json");
@@ -96,15 +137,24 @@ export async function databaseInit() {
 			archetype.id,
 			archetype.name,
 		]);
-		const insertArchetypesQuery = "INSERT IGNORE INTO archetypes (id, name) VALUES ?";
-		const [ArchetypesResults] = await db.query(insertArchetypesQuery, [insertArchetypesData]);
+		const insertArchetypesQuery = `INSERT IGNORE INTO archetypes (
+			id, 
+			name
+		) 
+		VALUES ?`;
+		await db.query(insertArchetypesQuery, [insertArchetypesData]);
 		console.log("Archetypes data inserted");
 
 		const imagesData = await readLargeFile("/fetched-data/images.json");
 		const imagesJSON = await JSON.parse(imagesData);
 		const insertImagesData = imagesJSON.map(image => [image.id, image.card_id, image.image_id]);
-		const insertImagesQuery = "INSERT IGNORE INTO images (id, card_id, image_id) VALUES ?";
-		const [imagesResults] = await db.query(insertImagesQuery, [insertImagesData]);
+		const insertImagesQuery = `INSERT IGNORE INTO images (
+			id, 
+			card_id, 
+			image_id
+		) 
+		VALUES ?`;
+		await db.query(insertImagesQuery, [insertImagesData]);
 		console.log("Images data inserted");
 
 		const setsData = await readLargeFile("/fetched-data/sets.json");
@@ -116,8 +166,15 @@ export async function databaseInit() {
 			set.date,
 			set.cards_amount,
 		]);
-		const insertSetsQuery = "INSERT IGNORE INTO sets (id, name, code, date, cards_amount) VALUES ?";
-		const [setsResults] = await db.query(insertSetsQuery, [insertSetsData]);
+		const insertSetsQuery = `INSERT IGNORE INTO sets (
+			id, 
+			name, 
+			code, 
+			date, 
+			cards_amount
+		) 
+		VALUES ?`;
+		await db.query(insertSetsQuery, [insertSetsData]);
 		console.log("Sets data inserted");
 
 		const printsData = await readLargeFile("/fetched-data/prints.json");
@@ -129,9 +186,15 @@ export async function databaseInit() {
 			print.rarity,
 			print.code,
 		]);
-		const insertPrintsQuery =
-			"INSERT IGNORE INTO prints (id, card_id, product_id, rarity, code) VALUES ?";
-		const [printsResults] = await db.query(insertPrintsQuery, [insertPrintsData]);
+		const insertPrintsQuery = `INSERT IGNORE INTO prints (
+			id, 
+			card_id, 
+			product_id, 
+			rarity, 
+			code
+		) 
+		VALUES ?`;
+		await db.query(insertPrintsQuery, [insertPrintsData]);
 		console.log("Prints data inserted");
 
 		console.log("All data was inserted successfully");
