@@ -45,16 +45,16 @@ export async function databaseInit() {
 
 		const createImagesTableQuery = `CREATE TABLE IF NOT EXISTS images (
 			id INT PRIMARY KEY, 
-			card_id int NOT NULL, 
-			image_id int NOT NULL
+			cardID int NOT NULL, 
+			imageID int NOT NULL
 		)`;
 		await db.execute(createImagesTableQuery);
 		console.log("Images table created");
 
 		const createPrintsTableQuery = `CREATE TABLE IF NOT EXISTS prints (
 			id INT PRIMARY KEY, 
-			card_id int NOT NULL, 
-			product_id int NOT NULL, 
+			cardID int NOT NULL, 
+			setID int NOT NULL, 
 			rarity VARCHAR(255) NOT NULL, 
 			code VARCHAR(255) NOT NULL
 		)`;
@@ -66,7 +66,7 @@ export async function databaseInit() {
 			name VARCHAR(255) NOT NULL, 
 			code VARCHAR(255) NOT NULL, 
 			date DATE NOT NULL, 
-			cards_amount INT NOT NULL)`;
+			cardsAmount INT NOT NULL)`;
 		await db.execute(createSetsTableQuery);
 		console.log("Sets table created");
 
@@ -155,11 +155,11 @@ export async function databaseInit() {
 
 		const imagesData = await readLargeFile("/fetched-data/images.json");
 		const imagesJSON = await JSON.parse(imagesData);
-		const insertImagesData = imagesJSON.map(image => [image.id, image.card_id, image.image_id]);
-		const insertImagesQuery = `INSERT IGNORE INTO images (
+		const insertImagesData = imagesJSON.map(image => [image.id, image.cardID, image.imageID]);
+		const insertImagesQuery = `INSERT IGNORE INTO images ( 
 			id, 
-			card_id, 
-			image_id
+			cardID, 
+			imageID 
 		) 
 		VALUES ?`;
 		await db.query(insertImagesQuery, [insertImagesData]);
@@ -172,14 +172,14 @@ export async function databaseInit() {
 			set.name,
 			set.code,
 			set.date,
-			set.cards_amount,
+			set.cardsAmount,
 		]);
 		const insertSetsQuery = `INSERT IGNORE INTO sets (
 			id, 
 			name, 
 			code, 
 			date, 
-			cards_amount
+			cardsAmount
 		) 
 		VALUES ?`;
 		await db.query(insertSetsQuery, [insertSetsData]);
@@ -189,15 +189,15 @@ export async function databaseInit() {
 		const printsJSON = await JSON.parse(printsData);
 		const insertPrintsData = printsJSON.map(print => [
 			print.id,
-			print.card_id,
-			print.product_id,
+			print.cardID,
+			print.setID,
 			print.rarity,
 			print.code,
 		]);
 		const insertPrintsQuery = `INSERT IGNORE INTO prints (
 			id, 
-			card_id, 
-			product_id, 
+			cardID, 
+			setID, 
 			rarity, 
 			code
 		) 

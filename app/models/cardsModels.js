@@ -7,9 +7,9 @@ export async function getAllCards(page, perPage) {
 	// Calculate pagination offset
 	const offset = (page - 1) * perPage;
 
-	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images 
+	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.imageID) AS images 
 	FROM cards 
-	INNER JOIN images ON cards.id = images.card_id 
+	INNER JOIN images ON cards.id = images.cardID 
 	GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist 
 	LIMIT ? 
 	OFFSET ?`;
@@ -26,9 +26,9 @@ export async function getAllCards(page, perPage) {
 export async function getSpecificCard(name) {
 	const db = await getDatabase();
 
-	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images 
+	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.imageID) AS images 
 	FROM cards 
-	INNER JOIN images ON cards.id = images.card_id 
+	INNER JOIN images ON cards.id = images.cardID 
 	WHERE cards.name = ? 
 	GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist`;
 	const [rows] = await db.execute(query, [name]);
@@ -43,9 +43,9 @@ export async function getCardsByName(name, page, perPage) {
 	// Calculate pagination offset
 	const offset = (page - 1) * perPage;
 
-	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images 
+	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.imageID) AS images 
 	FROM cards 
-	INNER JOIN images ON cards.id = images.card_id 
+	INNER JOIN images ON cards.id = images.cardID 
 	WHERE name LIKE ? 
 	GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist 
 	LIMIT ? 
@@ -67,8 +67,8 @@ export async function getCardPrints(id) {
 
 	const query = `SELECT prints.id, prints.rarity, prints.code, sets.name AS setName, sets.date AS date 
 	FROM prints 
-	INNER JOIN sets ON prints.product_id = sets.id 
-	WHERE prints.card_id = ?`;
+	INNER JOIN sets ON prints.setID = sets.id 
+	WHERE prints.cardID = ?`;
 	const [rows] = await db.execute(query, [id]);
 
 	return rows;

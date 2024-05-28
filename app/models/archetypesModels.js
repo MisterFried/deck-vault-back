@@ -17,9 +17,9 @@ export async function getArchetypeCards(name, search, page, perPage) {
 
 	// If search is empty, get all the cards of the specified archetype
 	if (search === "") {
-		const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images 
+		const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.imageID) AS images 
 		FROM cards 
-		INNER JOIN images ON cards.id = images.card_id 
+		INNER JOIN images ON cards.id = images.cardID 
 		WHERE archetype = ? 
 		GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist 
 		LIMIT ? 
@@ -37,9 +37,9 @@ export async function getArchetypeCards(name, search, page, perPage) {
 	}
 
 	// If search is not empty, get the cards of the specified archetype that match the search
-	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.image_id) AS images 
+	const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, GROUP_CONCAT(images.imageID) AS images 
 	FROM cards 
-	INNER JOIN images ON cards.id = images.card_id 
+	INNER JOIN images ON cards.id = images.cardID 
 	WHERE archetype = ? AND name LIKE ? 
 	GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist 
 	LIMIT ? 

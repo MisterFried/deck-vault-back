@@ -5,7 +5,7 @@ export async function getSetsList() {
 	const db = await getDatabase();
 
 	const [rows] = await db.execute(
-		"SELECT id, name, code, date, cards_amount AS cardsAmount FROM sets"
+		"SELECT id, name, code, date, cardsAmount FROM sets"
 	);
 	return rows;
 }
@@ -17,11 +17,11 @@ export async function getSetBreakdown(variants) {
 	const variantsDetails = [];
 
 	for (let i = 0; i < variants.length; i++) {
-		const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, prints.rarity, prints.code, GROUP_CONCAT(images.image_id) AS images 
+		const query = `SELECT cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, prints.rarity, prints.code, GROUP_CONCAT(images.imageID) AS images 
 		FROM cards 
-		INNER JOIN prints ON cards.id = prints.card_id 
-		INNER JOIN images ON cards.id = images.card_id 
-		WHERE prints.product_id = ? 
+		INNER JOIN prints ON cards.id = prints.cardID 
+		INNER JOIN images ON cards.id = images.cardID 
+		WHERE prints.setID = ? 
 		GROUP BY cards.id, cards.name, cards.attribute, cards.level, cards.type, cards.category, cards.description, cards.atk, cards.def, cards.archetype, cards.link, cards.scale, cards.banlist, prints.rarity, prints.code`;
 		const [rows] = await db.execute(query, [variants[i].id]);
 
