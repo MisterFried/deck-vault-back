@@ -9,6 +9,7 @@ import cardsRoutes from "./routes/cardsRoutes.js";
 import archetypesRoutes from "./routes/archetypesRoutes.js";
 import setsRoutes from "./routes/setsRoutes.js";
 import banlistRoutes from "./routes/banlistRoutes.js";
+import miscRoutes from "./routes/miscRoutes.js";
 
 async function startServer() {
 	// Variables
@@ -27,6 +28,7 @@ async function startServer() {
 	app.use("/archetypes", archetypesRoutes);
 	app.use("/sets", setsRoutes);
 	app.use("/banlist", banlistRoutes);
+	app.use("/misc", miscRoutes);
 
 	console.log("Everything is running fine !");
 }

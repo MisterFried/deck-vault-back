@@ -70,6 +70,13 @@ export async function databaseInit() {
 		await db.execute(createSetsTableQuery);
 		console.log("Sets table created");
 
+		const createMonsterCategoryTableQuery = `CREATE TABLE IF NOT EXISTS monster_category (
+			id INT PRIMARY KEY, 
+			name VARCHAR(255) NOT NULL
+		)`;
+		await db.execute(createMonsterCategoryTableQuery);
+		console.log("Monster category table created");
+
 		console.log("All tables were created successfully");
 	} catch (err) {
 		console.log("An error occurred during tables creation");
@@ -82,12 +89,13 @@ export async function databaseInit() {
 	//If files do not exist, fetch data from the internet and save it in the volume
 	if (!filesExists) {
 		console.log("Fetching data from the internet...");
-		const { cards, archetypes, images, sets, prints } = await fetchData();
+		const { cards, archetypes, images, sets, prints, monsterCategory } = await fetchData();
 		await writeLargeFile("/fetched-data/cards.json", JSON.stringify(cards));
 		await writeLargeFile("/fetched-data/archetypes.json", JSON.stringify(archetypes));
 		await writeLargeFile("/fetched-data/images.json", JSON.stringify(images));
 		await writeLargeFile("/fetched-data/sets.json", JSON.stringify(sets));
 		await writeLargeFile("/fetched-data/prints.json", JSON.stringify(prints));
+		await writeLargeFile("/fetched-data/monsterCategory.json", JSON.stringify(monsterCategory));
 		console.log("Data fetched and saved in the volume successfully");
 	}
 
@@ -196,6 +204,20 @@ export async function databaseInit() {
 		VALUES ?`;
 		await db.query(insertPrintsQuery, [insertPrintsData]);
 		console.log("Prints data inserted");
+
+		const monsterCategoryData = await readLargeFile("/fetched-data/monsterCategory.json");
+		const monsterCategoryJSON = await JSON.parse(monsterCategoryData);
+		const insertMonsterCategoryData = monsterCategoryJSON.map(monsterCategory => [
+			monsterCategory.id,
+			monsterCategory.name,
+		]);
+		const insertMonsterCategoryQuery = `INSERT IGNORE INTO monster_category (
+			id, 
+			name
+		) 
+		VALUES ?`;
+		await db.query(insertMonsterCategoryQuery, [insertMonsterCategoryData]);
+		console.log("Monster category data inserted");
 
 		console.log("All data was inserted successfully");
 	} catch (err) {

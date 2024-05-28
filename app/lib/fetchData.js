@@ -16,11 +16,12 @@ export default async function fetchData() {
 	const YGOProSetList = await setsResponse.json();
 
 	// Ids
-	let cardId = 1;
-	let productId = 1;
-	let imageId = 1;
-	let archetypeId = 1;
-	let printId = 1;
+	let cardID = 1;
+	let productID = 1;
+	let imageID = 1;
+	let archetypeID = 1;
+	let printID = 1;
+	let monsterCategoryID = 1;
 
 	// Datas
 	const cards = [];
@@ -28,18 +29,17 @@ export default async function fetchData() {
 	const images = [];
 	const sets = [];
 	const prints = [];
-
-	const alreadySeenArchetypes = []; // Keep track of already seen archetypes as a simple array
+	const monsterCategory = [];
 
 	//*** Sets data loop ***//
 	YGOProSetList.forEach(set => {
 		const setDate = set.tcg_date === "0000-00-00" ? "1000-01-01" : set.tcg_date;
 		sets.push({
-			id: productId++,
+			id: productID++,
 			name: set.set_name,
 			code: set.set_code,
-			date: setDate,
-			cards_amount: set.num_of_cards,
+			date: new Date(setDate),
+			cardsAmount: set.num_of_cards,
 		});
 	});
 
@@ -47,39 +47,53 @@ export default async function fetchData() {
 	YGOProCardList.forEach(card => {
 		// Card data
 		const newCard = {
-			id: cardId,
+			id: cardID,
 			name: card.name,
 			category: card.type,
 			description: card.desc,
+			attribute: card.attribute || null,
+			level: card.level || null,
+			type: card.race || null,
+			atk: card.atk || null,
+			def: card.def || null,
+			archetype: card.archetype || null,
+			link: card.linkval || null,
+			scale: card.scale || null,
+			banlist: "Unlimited",
 		};
-		if (card.attribute) newCard.attribute = card.attribute;
-		if (card.level) newCard.level = card.level;
-		if (card.race) newCard.type = card.race;
-		if (card.atk !== null) newCard.atk = card.atk;
-		if (card.def !== null) newCard.def = card.def;
-		if (card.archetype) newCard.archetype = card.archetype;
-		if (card.linkval) newCard.link = card.linkval;
-		if (card.scale) newCard.scale = card.scale;
-		newCard.banlist = "Unlimited";
 		if (card.banlist_info && card.banlist_info.ban_tcg)
 			newCard.banlist = card.banlist_info.ban_tcg;
+
 		cards.push(newCard);
 
+		// Add monster category if not already added
+		const isMonsterCategoryAlreadyAdded = monsterCategory.some(
+			category => category.name === card.type
+		);
+		if (card.type && !isMonsterCategoryAlreadyAdded) {
+			monsterCategory.push({
+				id: monsterCategoryID++,
+				name: card.type,
+			});
+		}
+
 		// Add archetype if not already added
-		if (!alreadySeenArchetypes.includes(newCard.archetype) && newCard.archetype) {
-			alreadySeenArchetypes.push(newCard.archetype);
+		const isArchetypeAlreadyAdded = archetypes.some(
+			archetype => archetype.name === card.archetype
+		);
+		if (card.archetype && !isArchetypeAlreadyAdded) {
 			archetypes.push({
-				id: archetypeId++,
-				name: newCard.archetype,
+				id: archetypeID++,
+				name: card.archetype,
 			});
 		}
 
 		// Add images (including alt images)
 		card.card_images.forEach(image => {
 			images.push({
-				id: imageId++,
-				card_id: cardId,
-				image_id: image.id,
+				id: imageID++,
+				cardID: cardID,
+				imageID: image.id,
 			});
 		});
 
@@ -95,17 +109,17 @@ export default async function fetchData() {
 				if (!correspondingSet) return;
 
 				prints.push({
-					id: printId++,
-					card_id: cardId,
-					product_id: correspondingSet.id,
+					id: printID++,
+					cardID: cardID,
+					setID: correspondingSet.id,
 					rarity: set.set_rarity,
 					code: set.set_code,
 				});
 			});
 		} // Else it means that the card has not been printed in any TCG set yet
 
-		cardId++;
+		cardID++;
 	});
 
-	return { cards, archetypes, images, sets, prints };
+	return { cards, archetypes, images, sets, prints, monsterCategory };
 }
