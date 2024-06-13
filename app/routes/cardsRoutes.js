@@ -52,12 +52,7 @@ router.get("/:name", async (req, res) => {
 
 		const cards = await processCardsByName(decodedName, page, perPage);
 
-		if (cards.total === 0) res.status(404).send("No cards matching the specified name.");
-		else if (cards.cards.length === 0)
-			res.status(404).send(
-				"No cards matching your pagination params. You are probably searching for a page that does not exist."
-			);
-		else res.status(200).send(cards);
+		res.status(200).send(cards);
 	} catch (error) {
 		console.error(error);
 		res.status(500).send(error);
