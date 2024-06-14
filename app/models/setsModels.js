@@ -4,9 +4,7 @@ import { getDatabase } from "../lib/databaseInit.js";
 export async function getSetsList() {
 	const db = await getDatabase();
 
-	const [rows] = await db.execute(
-		"SELECT id, name, code, date, cardsAmount FROM sets"
-	);
+	const [rows] = await db.execute("SELECT id, name, code, date, cardsAmount FROM sets");
 	return rows;
 }
 
